@@ -1,4 +1,4 @@
-conimport SwiftUI
+import SwiftUI
 
 @main
 struct FerrariApp: App {
