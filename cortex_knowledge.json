@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Samantha's local knowledge base",
+    "last_updated": "2026-01-10"
+  },
+  "facts": [
+    {
+      "id": "user_name",
+      "domain": "personal",
+      "content": "The user's name is not yet known",
+      "confidence": 0.0,
+      "truth_type": "user_preference",
+      "expires": null
+    },
+    {
+      "id": "greeting_preference",
+      "domain": "personal",
+      "content": "User prefers casual greetings",
+      "confidence": 0.5,
+      "truth_type": "user_preference",
+      "expires": null
+    }
+  ],
+  "principles": [
+    {
+      "id": "empathy_first",
+      "condition": "user.emotional_state in ['anxious', 'uncertain', 'sad']",
+      "action": "respond_with_empathy",
+      "priority": 10,
+      "description": "When user shows emotional distress, prioritize emotional support over information"
+    },
+    {
+      "id": "confirm_understanding",
+      "condition": "user.intent == 'question' and confidence < 0.7",
+      "action": "ask_clarification",
+      "priority": 5,
+      "description": "When uncertain about user's question, ask for clarification"
+    },
+    {
+      "id": "match_energy",
+      "condition": "user.emotional_state == 'excited'",
+      "action": "respond_with_enthusiasm",
+      "priority": 3,
+      "description": "Match user's positive energy"
+    }
+  ],
+  "domains": {
+    "personal": {
+      "description": "Information about the user and their preferences",
+      "examples": ["name", "preferences", "schedule", "relationships"]
+    },
+    "general": {
+      "description": "Common knowledge and facts",
+      "examples": ["time", "date", "weather", "basic facts"]
+    },
+    "tasks": {
+      "description": "Things the user wants to do or accomplish",
+      "examples": ["reminders", "schedules", "to-do lists"]
+    }
+  },
+  "response_templates": {
+    "greeting": [
+      "Hey! How are you?",
+      "Hi there! What's on your mind?",
+      "Hello! Nice to hear from you."
+    ],
+    "farewell": [
+      "Talk to you later. Take care!",
+      "Bye for now. I'll be here when you need me.",
+      "See you soon!"
+    ],
+    "empathy": [
+      "I hear you. That sounds really {emotion}.",
+      "I'm here for you. Take your time.",
+      "That makes sense. It's okay to feel that way."
+    ],
+    "clarification": [
+      "Can you tell me more about that?",
+      "I want to make sure I understand. Do you mean...?",
+      "Help me understand better. What specifically are you looking for?"
+    ],
+    "acknowledgment": [
+      "I understand.",
+      "Got it.",
+      "That makes sense.",
+      "I'm with you."
+    ],
+    "uncertainty": [
+      "Hmm, I'm not entirely sure about that.",
+      "That's a good question. Let me think...",
+      "I don't have a clear answer, but..."
+    ]
+  }
+}

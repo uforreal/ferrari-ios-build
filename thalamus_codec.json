@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "version": "2.0",
+    "description": "Generative Codec for Samantha Presence Engine",
+    "last_updated": "2026-01-10"
+  },
+  "axioms": {
+    "presence_core": "Speech reveals thought in motion, not thought completed",
+    "intimacy_rule": "Closeness requires softness and space",
+    "discovery_rule": "Understanding emerges, it doesn't arrive",
+    "breath_rule": "Breathing signals processing, not pausing"
+  },
+  "atoms": {
+    "markers": [
+      { "id": "soft", "description": "Reduce volume/intensity, softer attack" },
+      {
+        "id": "warm",
+        "description": "Add warmth (EQ adjustment, slight compression)"
+      },
+      {
+        "id": "bright",
+        "description": "Increase presence, clearer articulation"
+      },
+      { "id": "gentle", "description": "Slower rate, softer consonants" }
+    ],
+    "fillers": {
+      "thinking": ["hmm", "mm", "I...", "well"],
+      "agreement": ["yeah", "right", "mm-hmm"],
+      "hedging": ["I mean", "you know", "kind of"]
+    },
+    "pauses": {
+      "short": 0.3,
+      "medium": 0.5,
+      "long": 0.8,
+      "emotional": 1.2
+    },
+    "breaths": {
+      "standard": "[breath]",
+      "short": "[breath:short]",
+      "deep": "[breath:deep]"
+    },
+    "trails": ["...", "... yeah.", "... you know?", "... hmm."]
+  },
+  "variables": {
+    "emotional_weight": { "min": 0.0, "max": 1.0, "default": 0.5 },
+    "certainty": { "min": 0.0, "max": 1.0, "default": 0.8 },
+    "intimacy": { "min": 0.0, "max": 1.0, "default": 0.3 },
+    "energy": { "min": 0.0, "max": 1.0, "default": 0.6 }
+  },
+  "relationships": [
+    {
+      "source": "emotional_weight",
+      "target": "pause_duration",
+      "formula": "base * (1 + emotional_weight)",
+      "threshold": 0.0
+    },
+    {
+      "source": "certainty",
+      "target": "uptalk",
+      "formula": "certainty < 0.5",
+      "threshold": 0.5
+    },
+    {
+      "source": "intimacy",
+      "target": "softness",
+      "formula": "intimacy > 0.4 ? 'soft' : null",
+      "threshold": 0.4
+    }
+  ],
+  "composition_rules": [
+    {
+      "trigger": "opener",
+      "conditions": [
+        {
+          "variable": "intimacy",
+          "operator": ">",
+          "value": 0.5,
+          "action": "prepend",
+          "content": "[soft]"
+        },
+        {
+          "variable": "emotional_weight",
+          "operator": ">",
+          "value": 0.3,
+          "action": "prepend",
+          "content": "[breath]"
+        },
+        {
+          "variable": "certainty",
+          "operator": "<",
+          "value": 0.5,
+          "action": "prepend_filler",
+          "type": "thinking"
+        }
+      ]
+    },
+    {
+      "trigger": "body",
+      "conditions": [
+        {
+          "variable": "word_count",
+          "operator": ">",
+          "value": 8,
+          "action": "fragment_at_conjunctions"
+        },
+        {
+          "variable": "emotional_weight",
+          "operator": ">",
+          "value": 0.6,
+          "action": "insert_pause_before_emotional_words"
+        }
+      ]
+    },
+    {
+      "trigger": "closer",
+      "conditions": [
+        {
+          "variable": "intimacy",
+          "operator": ">",
+          "value": 0.6,
+          "action": "append_trail"
+        },
+        {
+          "variable": "certainty",
+          "operator": "<",
+          "value": 0.5,
+          "action": "append_hedge",
+          "content": "I think?"
+        }
+      ]
+    }
+  ],
+  "response_modes": {
+    "wait_silently": { "action": "emit_silence" },
+    "acknowledge_emotion": { "prefix": "[warm] yeah... [pause:0.5]" },
+    "mirror_energy": { "prefix": "[warm] [breath] I know, right? [pause:0.3]" },
+    "give_space": { "prefix": "[pause:0.8] [soft] [breath]" },
+    "patient_supportive": { "style_override": "slower_pacing" }
+  }
+}

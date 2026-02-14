@@ -1,0 +1,24 @@
+# Ignores ONLY these specific junk folders
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+*.onnx
+
+# Ignore build artifacts
+Pods/
+Podfile.lock
+.build/
+build/
+DerivedData/
+*.xcworkspace
+*.xcodeproj
+*.ipa
+xcuserdata/
+
+# Ignore virtual environments & large model folders
+ferrari_tts/venv/
+ferrari_tts/models/
+ferrari_tts/output/
+ferrari_tts/scripts/
+ferrari_tts/*.wav

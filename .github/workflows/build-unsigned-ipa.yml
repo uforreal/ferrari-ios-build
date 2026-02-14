@@ -1,0 +1,112 @@
+# Build Unsigned IPA — Ferrari Voice Engine
+# Project Antigravity — Phase 4
+#
+# This workflow builds an UNSIGNED .ipa for sideloading.
+# No code signing. No provisioning profiles. No Apple Developer account.
+# The operator sideloads the IPA manually (e.g. via AltStore, Sideloadly, or TrollStore).
+#
+# Trigger: push to main, or manual dispatch from Actions tab.
+
+name: Build Unsigned IPA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14  # Apple Silicon runner (M1)
+    timeout-minutes: 30
+
+    steps:
+      # ─────────────────────────────────────────────
+      # 1. Checkout
+      # ─────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ─────────────────────────────────────────────
+      # 2. Select Xcode version
+      # ─────────────────────────────────────────────
+      - name: Select Xcode 15
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+
+      # ─────────────────────────────────────────────
+      # 3. Install XcodeGen (project.yml → .xcodeproj)
+      # ─────────────────────────────────────────────
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # ─────────────────────────────────────────────
+      # 4. Generate Xcode project from project.yml
+      # ─────────────────────────────────────────────
+      - name: Generate Xcode project
+        working-directory: ferrari_tts/ios_code
+        run: xcodegen generate
+
+      # ─────────────────────────────────────────────
+      # 5. Install CocoaPods (onnxruntime-objc)
+      # ─────────────────────────────────────────────
+      - name: Install CocoaPods dependencies
+        working-directory: ferrari_tts/ios_code
+        run: |
+          pod install --repo-update
+
+      # ─────────────────────────────────────────────
+      # 6. Build the app (UNSIGNED)
+      # ─────────────────────────────────────────────
+      - name: Build unsigned app
+        working-directory: ferrari_tts/ios_code
+        run: |
+          xcodebuild build \
+            -workspace Ferrari.xcworkspace \
+            -scheme Ferrari \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            DEVELOPMENT_TEAM="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            ONLY_ACTIVE_ARCH=NO \
+            | tail -50
+
+      # ─────────────────────────────────────────────
+      # 7. Package .app → .ipa
+      # ─────────────────────────────────────────────
+      - name: Package as unsigned IPA
+        working-directory: ferrari_tts/ios_code
+        run: |
+          # Find the .app bundle
+          APP_PATH=$(find build/Build/Products/Release-iphoneos -name "*.app" -type d | head -1)
+          
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ No .app bundle found in build output!"
+            find build/ -name "*.app" -type d
+            exit 1
+          fi
+          
+          echo "📦 Found app: $APP_PATH"
+          
+          # Create Payload directory structure
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          
+          # Create the IPA (just a zip with .ipa extension)
+          zip -r Ferrari-unsigned.ipa Payload/
+          
+          echo "✅ IPA created: Ferrari-unsigned.ipa"
+          ls -la Ferrari-unsigned.ipa
+
+      # ─────────────────────────────────────────────
+      # 8. Upload IPA as artifact
+      # ─────────────────────────────────────────────
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ferrari-unsigned-ipa
+          path: ferrari_tts/ios_code/Ferrari-unsigned.ipa
+          retention-days: 30
+          if-no-files-found: error

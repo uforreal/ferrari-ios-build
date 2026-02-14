@@ -1,0 +1,12 @@
+# System Build Tools
+setuptools
+wheel
+
+# Dependencies
+python-dotenv
+google-genai
+edge-tts
+numpy>=2.0.0
+requests
+fastapi
+uvicorn

@@ -1,0 +1,58 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        cache: true
+
+    - name: Install dependencies
+      working-directory: rufen_app
+      run: |
+        flutter clean
+        flutter pub get
+
+    - name: Build iOS (no codesign)
+      working-directory: rufen_app
+      run: |
+        flutter build ios --release --no-codesign
+
+    - name: Debug - List App Contents
+      working-directory: rufen_app
+      run: |
+        echo "Listing Runner.app contents..."
+        ls -R build/ios/iphoneos/Runner.app
+        echo "Checking for assets..."
+        ls -R build/ios/iphoneos/Runner.app/Frameworks/App.framework/flutter_assets || echo "No asset folder found!"
+
+    - name: Create Payload directory
+      run: |
+        mkdir -p Payload
+        cp -r rufen_app/build/ios/iphoneos/Runner.app Payload/
+
+    - name: Create IPA
+      run: |
+        zip -r RUFEN-unsigned.ipa Payload
+
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: RUFEN-iOS-IPA
+        path: RUFEN-unsigned.ipa
+        retention-days: 30

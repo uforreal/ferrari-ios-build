@@ -1,0 +1,9 @@
+platform :ios, '15.0'
+
+target 'Ferrari' do
+  use_frameworks!
+
+  # Core Neural Engine support
+  pod 'onnxruntime-objc'
+
+end
