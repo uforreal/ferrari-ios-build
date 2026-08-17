@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interactive iPhone Mockup</title>
+<style>
+  :root { --phone-w: 390px; --phone-h: 844px; --screen:#fff; --frame:#111214; --accent:#007aff; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; background:#e9e9ed; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif; }
+  .stage { display:grid; gap:18px; justify-items:center; padding:30px; }
+  .phone { position:relative; width:var(--phone-w); height:var(--phone-h); padding:7px; border-radius:55px; background:linear-gradient(145deg,#34353a,#08090b 45%,#292a2e); box-shadow:0 25px 55px #0003, inset 0 0 0 1px #ffffff22; }
+  .screen { position:relative; width:100%; height:100%; overflow:hidden; border-radius:49px; background:var(--screen); color:#111; }
+  .island { position:absolute; z-index:20; top:13px; left:50%; transform:translateX(-50%); width:140px; height:39px; border-radius:22px; background:#050506; }
+  .camera { position:absolute; right:19px; top:12px; width:6px; height:6px; border-radius:50%; background:#1d2634; }
+  .status { position:absolute; z-index:10; top:12px; left:25px; right:25px; display:flex; justify-content:space-between; font-size:13px; font-weight:600; }
+  .content { position:absolute; inset:0; padding:70px 22px 45px; display:flex; flex-direction:column; }
+  .home { position:absolute; z-index:30; bottom:9px; left:50%; transform:translateX(-50%); width:115px; height:5px; border-radius:5px; background:#111; }
+  .side { position:absolute; background:#17181b; width:7px; border-radius:4px; }
+  .action { border:0; border-radius:14px; padding:14px 18px; background:var(--accent); color:white; font:inherit; font-weight:600; cursor:pointer; }
+  .action:active { transform:scale(.98); }
+  .toolbar { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+  .toolbar button { border:1px solid #ccc; background:white; border-radius:10px; padding:8px 12px; cursor:pointer; }
+  .screen.editing { outline:2px dashed #007aff55; outline-offset:-8px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="side" style="left:-5px;top:155px;height:70px"></div>
+    <div class="side" style="left:-5px;top:240px;height:45px"></div>
+    <div class="side" style="right:-5px;top:195px;height:95px"></div>
+    <div class="screen" id="screen" tabindex="0">
+      <div class="island"><span class="camera"></span></div>
+      <div class="status"><span id="clock">9:41</span><span>▮▮▮  Wi‑Fi  ▰</span></div>
+      <main class="content" id="screenContent" contenteditable="false">
+        <h1 style="margin-top:40px">Your app</h1>
+        <p>Tap the button or edit this screen to start building your own UI.</p>
+        <button class="action" id="demoButton">Tap me</button>
+      </main>
+      <div class="home"></div>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button id="editBtn">Edit screen</button>
+    <button id="resetBtn">Reset</button>
+    <button id="darkBtn">Dark mode</button>
+  </div>
+</div>
+<script>
+  const screen = document.querySelector('#screen');
+  const content = document.querySelector('#screenContent');
+  const demo = document.querySelector('#demoButton');
+  document.querySelector('#editBtn').onclick = () => {
+    const editing = content.contentEditable !== 'true';
+    content.contentEditable = editing;
+    screen.classList.toggle('editing', editing);
+    if (editing) content.focus();
+  };
+  document.querySelector('#resetBtn').onclick = () => location.reload();
+  document.querySelector('#darkBtn').onclick = () => {
+    const dark = screen.dataset.dark !== '1';
+    screen.dataset.dark = dark ? '1' : '0';
+    screen.style.background = dark ? '#101114' : '#fff';
+    screen.style.color = dark ? '#fff' : '#111';
+  };
+  demo.onclick = () => {
+    demo.textContent = demo.textContent === 'Tapped!' ? 'Tap me' : 'Tapped!';
+  };
+  document.querySelector('#clock').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+</script>
+</body>
+</html>
