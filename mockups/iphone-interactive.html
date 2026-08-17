@@ -2,72 +2,83 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Interactive iPhone Mockup</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Alta — Voice Interaction Mockup</title>
 <style>
-  :root { --phone-w: 390px; --phone-h: 844px; --screen:#fff; --frame:#111214; --accent:#007aff; }
-  * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; display:grid; place-items:center; background:#e9e9ed; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif; }
-  .stage { display:grid; gap:18px; justify-items:center; padding:30px; }
-  .phone { position:relative; width:var(--phone-w); height:var(--phone-h); padding:7px; border-radius:55px; background:linear-gradient(145deg,#34353a,#08090b 45%,#292a2e); box-shadow:0 25px 55px #0003, inset 0 0 0 1px #ffffff22; }
-  .screen { position:relative; width:100%; height:100%; overflow:hidden; border-radius:49px; background:var(--screen); color:#111; }
-  .island { position:absolute; z-index:20; top:13px; left:50%; transform:translateX(-50%); width:140px; height:39px; border-radius:22px; background:#050506; }
-  .camera { position:absolute; right:19px; top:12px; width:6px; height:6px; border-radius:50%; background:#1d2634; }
-  .status { position:absolute; z-index:10; top:12px; left:25px; right:25px; display:flex; justify-content:space-between; font-size:13px; font-weight:600; }
-  .content { position:absolute; inset:0; padding:70px 22px 45px; display:flex; flex-direction:column; }
-  .home { position:absolute; z-index:30; bottom:9px; left:50%; transform:translateX(-50%); width:115px; height:5px; border-radius:5px; background:#111; }
-  .side { position:absolute; background:#17181b; width:7px; border-radius:4px; }
-  .action { border:0; border-radius:14px; padding:14px 18px; background:var(--accent); color:white; font:inherit; font-weight:600; cursor:pointer; }
-  .action:active { transform:scale(.98); }
-  .toolbar { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
-  .toolbar button { border:1px solid #ccc; background:white; border-radius:10px; padding:8px 12px; cursor:pointer; }
-  .screen.editing { outline:2px dashed #007aff55; outline-offset:-8px; }
+  :root{--phone-w:390px;--phone-h:844px;--ink:#080808;--panel:#211f1c;--blue:#2948ff;--red:#e44b43}
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif}
+  body{min-height:100vh;display:grid;place-items:center;background:#e9e9ed;padding:28px}
+  .stage{display:grid;gap:18px;justify-items:center}
+  .phone{position:relative;width:var(--phone-w);height:var(--phone-h);padding:7px;border-radius:56px;background:linear-gradient(145deg,#36373a,#090a0c 48%,#292a2d);box-shadow:0 28px 70px #0004,inset 0 0 0 1px #ffffff25}
+  .screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:50px;background:#c9c9c9;color:var(--ink);isolation:isolate}
+  .screen::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#bdbdbd 0%,#c8c8c8 56%,#d1bba6 100%);z-index:-2}
+  .screen::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#c69d7d44 0%,transparent 52%);z-index:-1}
+  .island{position:absolute;z-index:30;top:12px;left:50%;transform:translateX(-50%);width:137px;height:38px;border-radius:22px;background:#050506}
+  .camera{position:absolute;right:18px;top:11px;width:6px;height:6px;border-radius:50%;background:#1c2635}
+  .status{position:absolute;z-index:40;top:12px;left:27px;right:25px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:650;letter-spacing:.1px}
+  .status-icons{font-size:15px;letter-spacing:2px}
+  .close{position:absolute;z-index:45;top:60px;left:22px;width:48px;height:48px;border-radius:50%;border:1px solid #ffffff7d;background:#ffffff20;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:37px;font-weight:200;line-height:42px;color:#0b0b0b;cursor:pointer;box-shadow:0 8px 18px #0002}
+  .close:active{transform:scale(.95)}
+  .greeting{position:absolute;z-index:5;left:24px;right:24px;top:50%;transform:translateY(-50%);text-align:center;font-size:29px;line-height:1.32;font-weight:400;letter-spacing:-.8px}
+  .recording{position:absolute;z-index:20;left:0;right:0;bottom:0;height:356px;border-radius:42px 42px 0 0;background:linear-gradient(180deg,#211f1c,#22211f);color:white;display:flex;flex-direction:column;align-items:center;padding-top:62px;transition:transform .35s ease,opacity .25s ease}
+  .recording.hidden{transform:translateY(100%);opacity:0;pointer-events:none}
+  .timer{display:flex;align-items:center;gap:14px;font-size:27px;font-weight:400;letter-spacing:.2px}
+  .dot{width:18px;height:18px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 #e44b434d;animation:pulse 1.4s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+  .listening{margin-top:48px;font-size:23px;color:#8d8b8a;letter-spacing:-.2px}
+  .controls{position:absolute;left:25px;right:25px;bottom:65px;display:flex;justify-content:space-between;align-items:center}
+  .control{width:69px;height:69px;border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;color:white;font-size:37px;font-weight:200}
+  .cancel{background:#414141}.confirm{background:var(--blue);font-size:38px}
+  .control:active{transform:scale(.93)}
+  .credit{position:absolute;z-index:25;bottom:0;left:0;right:0;height:42px;background:#2c2b29;color:#eee;display:flex;align-items:center;justify-content:space-between;padding:0 25px;font-size:15px;font-weight:650}
+  .brand{display:flex;align-items:center;gap:10px}.badge{width:31px;height:31px;border-radius:7px;background:#050505;display:grid;place-items:center;font-size:8px;font-weight:800}.curated{display:flex;align-items:center;gap:7px}.mark{font-size:19px;font-weight:900;letter-spacing:-3px}
+  .side{position:absolute;background:#17181b;width:7px;border-radius:4px}.side.l1{left:-5px;top:155px;height:70px}.side.l2{left:-5px;top:240px;height:45px}.side.r1{right:-5px;top:195px;height:95px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.toolbar button{border:1px solid #ccc;background:white;border-radius:10px;padding:9px 13px;cursor:pointer;font:inherit}.toolbar button:hover{background:#f7f7f7}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);padding:11px 16px;border-radius:14px;background:#111;color:#fff;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 8px 30px #0003}.toast.show{opacity:1;transform:translate(-50%,0)}
+  @media(max-width:470px){body{padding:10px}.phone{transform:scale(calc((100vw - 20px)/390));transform-origin:top center;margin-bottom:calc(-844px + (100vw - 20px)/390 * 844px)} }
 </style>
 </head>
 <body>
 <div class="stage">
-  <div class="phone" id="phone">
-    <div class="side" style="left:-5px;top:155px;height:70px"></div>
-    <div class="side" style="left:-5px;top:240px;height:45px"></div>
-    <div class="side" style="right:-5px;top:195px;height:95px"></div>
-    <div class="screen" id="screen" tabindex="0">
+  <div class="phone">
+    <div class="side l1"></div><div class="side l2"></div><div class="side r1"></div>
+    <div class="screen" id="screen">
       <div class="island"><span class="camera"></span></div>
-      <div class="status"><span id="clock">9:41</span><span>▮▮▮  Wi‑Fi  ▰</span></div>
-      <main class="content" id="screenContent" contenteditable="false">
-        <h1 style="margin-top:40px">Your app</h1>
-        <p>Tap the button or edit this screen to start building your own UI.</p>
-        <button class="action" id="demoButton">Tap me</button>
-      </main>
-      <div class="home"></div>
+      <div class="status"><span id="clock">9:41</span><span class="status-icons">▮▮▮  ◔  ▰</span></div>
+      <button class="close" id="closeBtn" aria-label="Close">×</button>
+      <div class="greeting" id="greeting">Good afternoon, Sam<br>How can I style you?</div>
+      <section class="recording" id="recording">
+        <div class="timer"><span class="dot"></span><span id="timer">0:01</span></div>
+        <div class="listening" id="listening">Listening...</div>
+        <div class="controls">
+          <button class="control cancel" id="cancelBtn" aria-label="Cancel">×</button>
+          <button class="control confirm" id="confirmBtn" aria-label="Confirm">✓</button>
+        </div>
+        <div class="credit"><div class="brand"><span class="badge">ALTA</span><span>Alta</span></div><div class="curated">curated by <span class="mark">MOBBIN</span></div></div>
+      </section>
     </div>
   </div>
-  <div class="toolbar">
-    <button id="editBtn">Edit screen</button>
-    <button id="resetBtn">Reset</button>
-    <button id="darkBtn">Dark mode</button>
-  </div>
+  <div class="toolbar"><button id="reopenBtn">Start listening</button><button id="darkBtn">Dim background</button><button id="resetBtn">Reset</button></div>
 </div>
+<div class="toast" id="toast"></div>
 <script>
-  const screen = document.querySelector('#screen');
-  const content = document.querySelector('#screenContent');
-  const demo = document.querySelector('#demoButton');
-  document.querySelector('#editBtn').onclick = () => {
-    const editing = content.contentEditable !== 'true';
-    content.contentEditable = editing;
-    screen.classList.toggle('editing', editing);
-    if (editing) content.focus();
-  };
-  document.querySelector('#resetBtn').onclick = () => location.reload();
-  document.querySelector('#darkBtn').onclick = () => {
-    const dark = screen.dataset.dark !== '1';
-    screen.dataset.dark = dark ? '1' : '0';
-    screen.style.background = dark ? '#101114' : '#fff';
-    screen.style.color = dark ? '#fff' : '#111';
-  };
-  demo.onclick = () => {
-    demo.textContent = demo.textContent === 'Tapped!' ? 'Tap me' : 'Tapped!';
-  };
-  document.querySelector('#clock').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+const recording=document.querySelector('#recording');
+const timerEl=document.querySelector('#timer');
+const listening=document.querySelector('#listening');
+const toast=document.querySelector('#toast');
+let seconds=1, interval;
+function startTimer(){clearInterval(interval);seconds=1;timerEl.textContent='0:01';interval=setInterval(()=>{seconds++;timerEl.textContent=`0:${String(seconds).padStart(2,'0')}`},1000)}
+function message(text){toast.textContent=text;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1500)}
+function closeRecording(text='Recording closed'){recording.classList.add('hidden');clearInterval(interval);message(text)}
+document.querySelector('#closeBtn').onclick=()=>closeRecording('Closed');
+document.querySelector('#cancelBtn').onclick=()=>closeRecording('Recording cancelled');
+document.querySelector('#confirmBtn').onclick=()=>{listening.textContent='Saved';document.querySelector('.dot').style.animation='none';message('Voice input confirmed');setTimeout(()=>{listening.textContent='Listening...';document.querySelector('.dot').style.animation='';},1000)};
+document.querySelector('#reopenBtn').onclick=()=>{recording.classList.remove('hidden');startTimer();message('Listening started')};
+document.querySelector('#darkBtn').onclick=()=>document.querySelector('#screen').classList.toggle('dim');
+document.querySelector('#resetBtn').onclick=()=>location.reload();
+document.querySelector('#clock').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+startTimer();
 </script>
 </body>
 </html>
