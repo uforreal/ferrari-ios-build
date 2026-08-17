@@ -14,10 +14,6 @@
   .screen{position:relative;width:100%;height:100%;overflow:hidden;border-radius:50px;background:#c9c9c9;color:var(--ink);isolation:isolate}
   .screen::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#bdbdbd 0%,#c8c8c8 56%,#d1bba6 100%);z-index:-2}
   .screen::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#c69d7d44 0%,transparent 52%);z-index:-1}
-  .island{position:absolute;z-index:30;top:12px;left:50%;transform:translateX(-50%);width:137px;height:38px;border-radius:22px;background:#050506}
-  .camera{position:absolute;right:18px;top:11px;width:6px;height:6px;border-radius:50%;background:#1c2635}
-  .status{position:absolute;z-index:40;top:12px;left:27px;right:25px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:650;letter-spacing:.1px}
-  .status-icons{font-size:15px;letter-spacing:2px}
   .close{position:absolute;z-index:45;top:60px;left:22px;width:48px;height:48px;border-radius:50%;border:1px solid #ffffff7d;background:#ffffff20;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:37px;font-weight:200;line-height:42px;color:#0b0b0b;cursor:pointer;box-shadow:0 8px 18px #0002}
   .close:active{transform:scale(.95)}
   .greeting{position:absolute;z-index:5;left:24px;right:24px;top:50%;transform:translateY(-50%);text-align:center;font-size:29px;line-height:1.32;font-weight:400;letter-spacing:-.8px}
@@ -36,7 +32,7 @@
   .side{position:absolute;background:#17181b;width:7px;border-radius:4px}.side.l1{left:-5px;top:155px;height:70px}.side.l2{left:-5px;top:240px;height:45px}.side.r1{right:-5px;top:195px;height:95px}
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.toolbar button{border:1px solid #ccc;background:white;border-radius:10px;padding:9px 13px;cursor:pointer;font:inherit}.toolbar button:hover{background:#f7f7f7}
   .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);padding:11px 16px;border-radius:14px;background:#111;color:#fff;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 8px 30px #0003}.toast.show{opacity:1;transform:translate(-50%,0)}
-  @media(max-width:470px){body{padding:10px}.phone{transform:scale(calc((100vw - 20px)/390));transform-origin:top center;margin-bottom:calc(-844px + (100vw - 20px)/390 * 844px)} }
+  @media(max-width:470px){body{padding:10px}.phone{transform:scale(calc((100vw - 20px)/390));transform-origin:top center;margin-bottom:calc(-844px + (100vw - 20px)/390 * 844px)}}
 </style>
 </head>
 <body>
@@ -44,8 +40,6 @@
   <div class="phone">
     <div class="side l1"></div><div class="side l2"></div><div class="side r1"></div>
     <div class="screen" id="screen">
-      <div class="island"><span class="camera"></span></div>
-      <div class="status"><span id="clock">9:41</span><span class="status-icons">▮▮▮  ◔  ▰</span></div>
       <button class="close" id="closeBtn" aria-label="Close">×</button>
       <div class="greeting" id="greeting">Good afternoon, Sam<br>How can I style you?</div>
       <section class="recording" id="recording">
@@ -77,7 +71,6 @@ document.querySelector('#confirmBtn').onclick=()=>{listening.textContent='Saved'
 document.querySelector('#reopenBtn').onclick=()=>{recording.classList.remove('hidden');startTimer();message('Listening started')};
 document.querySelector('#darkBtn').onclick=()=>document.querySelector('#screen').classList.toggle('dim');
 document.querySelector('#resetBtn').onclick=()=>location.reload();
-document.querySelector('#clock').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 startTimer();
 </script>
 </body>
